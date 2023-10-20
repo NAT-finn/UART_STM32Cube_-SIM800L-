@@ -43,7 +43,7 @@
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-uint8_t tx_buffer[27] = "Button is pressed!";
+uint8_t tx_buffer[27] = "Hi !";
 uint8_t rx_buffer[27] = {0};
 uint8_t check = 0;
 /* USER CODE END PV */
@@ -91,12 +91,21 @@ int main(void) {
 	MX_USART2_UART_Init();
 	/* USER CODE BEGIN 2 */
 	HAL_UART_Receive_IT (&huart2, rx_buffer, 27);
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, 1);
 
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
+		if(check == 1){
+			HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, 0);
+			HAL_UART_Transmit(&huart2, tx_buffer, 27, 10);
+			HAL_Delay(1000);
+			check = 0;
+		}
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, 1);
+		//HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, 1);
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
@@ -225,8 +234,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
            the HAL_UART_RxCpltCallback could be implemented in the user file
    */
 
-  //HAL_UART_Receive_IT(&huart2, rx_buffer, 27);
-  HAL_UART_Transmit(&huart2, rx_buffer, 27, 100);
+  check = 1;
+  HAL_UART_Receive_IT(&huart2, rx_buffer, 27);
+  //HAL_UART_Transmit(&huart2, rx_buffer, 27, 100);
 }
 
 /* USER CODE END 4 */
