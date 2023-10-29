@@ -18,11 +18,10 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include <string.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -135,7 +134,7 @@ int main(void)
 				if (ck == 0) {
 					//HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, 0);
 					HAL_UART_Transmit(&huart2, "ATD0969170709;\r\n", strlen("ATD0969170709;\r\n"), 100);
-					HAL_UART_Transmit(&huart1, tx_buffer, 30, 10);
+					HAL_UART_Transmit(&huart1, "ATD0969170709;\r\n", strlen("ATD0969170709;\r\n"), 100);
 				}
 				ck = 1;
 			}
@@ -296,14 +295,14 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
   if(huart->Instance == USART2)
   {
-	  if(rx_buffer[0] != 10 && idx < 100){
+	  if(rx_buffer[0] != '\n' && idx < 100){
 		  buffer[idx++] = rx_buffer[0];
 	  }else{
-		  buffer[idx] = 10;
-		  idx = 0;
+		  buffer[idx++] = 10;
 		  //check = 1;
-		  //HAL_UART_Transmit(&huart1, buffer, 100, 10);
-		  memset(buffer, 0, sizeof(buffer));
+		  HAL_UART_Transmit(&huart1, buffer, idx, 10);
+		  idx = 0;
+		  //memset(buffer, 0, sizeof(buffer));
 	  }
 	  HAL_UART_Receive_IT(&huart2, rx_buffer, 1);
   }
